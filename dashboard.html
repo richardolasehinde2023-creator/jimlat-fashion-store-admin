@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Jimlat Admin</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <h1>Jimlat Admin</h1>
+        <span>Store Management</span>
+      </div>
+
+      <nav class="admin-sidebar-nav">
+        <a href="dashboard.html" class="admin-nav-link active">
+          <span class="admin-nav-icon">📊</span>
+          Dashboard
+        </a>
+        <a href="orders.html" class="admin-nav-link">
+          <span class="admin-nav-icon">📦</span>
+          Orders
+        </a>
+        <a href="products.html" class="admin-nav-link">
+          <span class="admin-nav-icon">👕</span>
+          Products
+        </a>
+        <a href="add-product.html" class="admin-nav-link">
+          <span class="admin-nav-icon">➕</span>
+          Add Product
+        </a>
+        <a href="../index.html" target="_blank" class="admin-nav-link">
+          <span class="admin-nav-icon">🌐</span>
+          View Store
+        </a>
+      </nav>
+
+      <div class="admin-sidebar-footer">
+        <div class="admin-user-info">
+          <div class="admin-user-avatar">A</div>
+          <span class="admin-name">Admin</span>
+        </div>
+        <button class="admin-logout-btn"
+                onclick="AdminAuth.logout()">
+          🚪 Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <h2 class="admin-page-title">Dashboard</h2>
+      </div>
+
+      <div class="admin-content">
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-card-icon">📦</div>
+            <div class="stat-card-label">Total Orders</div>
+            <div class="stat-card-value" id="statTotalOrders">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">₦</div>
+            <div class="stat-card-label">Total Revenue</div>
+            <div class="stat-card-value" id="statTotalRevenue">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">👕</div>
+            <div class="stat-card-label">Total Products</div>
+            <div class="stat-card-value" id="statTotalProducts">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">⚠️</div>
+            <div class="stat-card-label">Low Stock</div>
+            <div class="stat-card-value" id="statLowStock">—</div>
+          </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h3 class="admin-card-title">Recent Orders</h3>
+            <a href="orders.html" class="btn btn-outline"
+               style="padding:6px 14px;font-size:12px">
+              View All
+            </a>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="recentOrders">
+              <tr>
+                <td colspan="6" class="loading-row">Loading...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Low Stock -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h3 class="admin-card-title">Low Stock Alert</h3>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Stock</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="lowStockProducts">
+              <tr>
+                <td colspan="3" class="loading-row">Loading...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <div class="admin-notifications"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/admin.js"></script>
+  <script>
+    Admin.initDashboard();
+  </script>
+
+</body>
+</html>

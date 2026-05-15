@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Product — Jimlat Admin</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <div class="admin-layout">
+
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <h1>Jimlat Admin</h1>
+        <span>Store Management</span>
+      </div>
+      <nav class="admin-sidebar-nav">
+        <a href="dashboard.html" class="admin-nav-link">
+          <span class="admin-nav-icon">📊</span>Dashboard
+        </a>
+        <a href="orders.html" class="admin-nav-link">
+          <span class="admin-nav-icon">📦</span>Orders
+        </a>
+        <a href="products.html" class="admin-nav-link">
+          <span class="admin-nav-icon">👕</span>Products
+        </a>
+        <a href="add-product.html" class="admin-nav-link active">
+          <span class="admin-nav-icon">➕</span>Add Product
+        </a>
+        <a href="../index.html" target="_blank" class="admin-nav-link">
+          <span class="admin-nav-icon">🌐</span>View Store
+        </a>
+      </nav>
+      <div class="admin-sidebar-footer">
+        <div class="admin-user-info">
+          <div class="admin-user-avatar">A</div>
+          <span class="admin-name">Admin</span>
+        </div>
+        <button class="admin-logout-btn" onclick="AdminAuth.logout()">
+          🚪 Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <h2 class="admin-page-title">Add New Product</h2>
+        <a href="products.html" class="btn btn-outline">
+          ← Back to Products
+        </a>
+      </div>
+
+      <div class="admin-content">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h3 class="admin-card-title">Product Details</h3>
+          </div>
+          <div style="padding:24px">
+
+            <form id="addProductForm" class="admin-form">
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">
+                    Product Name <span class="required">*</span>
+                  </label>
+                  <input type="text"
+                         class="form-input"
+                         id="addName"
+                         placeholder="e.g. Black Round Neck Tee">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">
+                    Category <span class="required">*</span>
+                  </label>
+                  <select class="form-input form-select" id="addCategory">
+                    <option value="">Select Category</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Subcategory</label>
+                  <input type="text"
+                         class="form-input"
+                         id="addSubcategory"
+                         placeholder="e.g. Round Necks">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">
+                    Stock Quantity <span class="required">*</span>
+                  </label>
+                  <input type="number"
+                         class="form-input"
+                         id="addStock"
+                         placeholder="e.g. 20"
+                         min="0">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">
+                    Price (₦) <span class="required">*</span>
+                  </label>
+                  <input type="number"
+                         class="form-input"
+                         id="addPrice"
+                         placeholder="e.g. 33000"
+                         min="0">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Sale Price (₦)</label>
+                  <input type="number"
+                         class="form-input"
+                         id="addSalePrice"
+                         placeholder="e.g. 28000"
+                         min="0">
+                </div>
+              </div>
+
+              <div class="form-checkbox-row">
+                <input type="checkbox" id="addOnSale">
+                <label for="addOnSale">This product is on sale</label>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  Description <span class="required">*</span>
+                </label>
+                <textarea class="form-input form-textarea"
+                          id="addDescription"
+                          placeholder="Describe the product...">
+                </textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  Image URL <span class="required">*</span>
+                </label>
+                <input type="text"
+                       class="form-input"
+                       id="addImageUrl"
+                       placeholder="images/products/your-image.jpg">
+                <p class="form-hint">
+                  Enter the path to the image in your store folder.
+                  Example: images/products/black-tee.jpg
+                </p>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Tags</label>
+                <input type="text"
+                       class="form-input"
+                       id="addTags"
+                       placeholder="black, tee, round neck, casual">
+                <p class="form-hint">
+                  Separate tags with commas.
+                  Used for search.
+                </p>
+              </div>
+
+              <div class="form-checkbox-row">
+                <input type="checkbox" id="addFeatured">
+                <label for="addFeatured">
+                  Show on homepage as featured product
+                </label>
+              </div>
+
+              <div style="display:flex;gap:12px;margin-top:8px">
+                <button type="submit"
+                        class="btn btn-primary"
+                        id="addProductBtn">
+                  Add Product
+                </button>
+                <a href="products.html" class="btn btn-outline">
+                  Cancel
+                </a>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <div class="admin-notifications"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/admin.js"></script>
+  <script>
+    Admin.initAddProductPage();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products — Jimlat Admin</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <div class="admin-layout">
+
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <h1>Jimlat Admin</h1>
+        <span>Store Management</span>
+      </div>
+      <nav class="admin-sidebar-nav">
+        <a href="dashboard.html" class="admin-nav-link">
+          <span class="admin-nav-icon">📊</span>Dashboard
+        </a>
+        <a href="orders.html" class="admin-nav-link">
+          <span class="admin-nav-icon">📦</span>Orders
+        </a>
+        <a href="products.html" class="admin-nav-link active">
+          <span class="admin-nav-icon">👕</span>Products
+        </a>
+        <a href="add-product.html" class="admin-nav-link">
+          <span class="admin-nav-icon">➕</span>Add Product
+        </a>
+        <a href="../index.html" target="_blank" class="admin-nav-link">
+          <span class="admin-nav-icon">🌐</span>View Store
+        </a>
+      </nav>
+      <div class="admin-sidebar-footer">
+        <div class="admin-user-info">
+          <div class="admin-user-avatar">A</div>
+          <span class="admin-name">Admin</span>
+        </div>
+        <button class="admin-logout-btn" onclick="AdminAuth.logout()">
+          🚪 Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <h2 class="admin-page-title">Products</h2>
+        <a href="add-product.html" class="btn btn-primary">
+          + Add New Product
+        </a>
+      </div>
+
+      <div class="admin-content">
+        <div class="admin-card">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Featured</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody">
+              <tr>
+                <td colspan="6" class="loading-row">Loading products...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <div class="admin-notifications"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/admin.js"></script>
+  <script>
+    Admin.initProductsPage();
+  </script>
+
+</body>
+</html>

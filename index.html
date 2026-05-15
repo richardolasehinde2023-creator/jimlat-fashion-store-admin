@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login — Jimlat</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <div class="admin-login-page">
+    <div class="admin-login-card">
+
+      <div class="admin-login-logo">
+        <h1>Jimlat Admin</h1>
+        <p>Sign in to manage your store</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email"
+               class="form-input"
+               id="loginEmail"
+               placeholder="admin@email.com">
+        <span id="loginError"
+              style="color:#ef4444;font-size:12px;margin-top:4px"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password"
+               class="form-input"
+               id="loginPassword"
+               placeholder="Your password">
+      </div>
+
+      <button class="btn btn-primary"
+              style="width:100%;justify-content:center"
+              id="loginBtn"
+              onclick="handleLogin()">
+        Sign In
+      </button>
+
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/admin.js"></script>
+  <script>
+    AdminAuth.init();
+
+    async function handleLogin() {
+      var email    = document.getElementById('loginEmail').value.trim();
+      var password = document.getElementById('loginPassword').value;
+      var errorEl  = document.getElementById('loginError');
+      var btn      = document.getElementById('loginBtn');
+
+      errorEl.textContent = '';
+
+      if (!email || !password) {
+        errorEl.textContent = 'Please enter email and password';
+        return;
+      }
+
+      btn.textContent = 'Signing in...';
+      btn.disabled    = true;
+
+      var result = await AdminAuth.login(email, password);
+
+      if (!result.success) {
+        errorEl.textContent = result.error;
+        btn.textContent     = 'Sign In';
+        btn.disabled        = false;
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') handleLogin();
+    });
+  </script>
+
+</body>
+</html>
