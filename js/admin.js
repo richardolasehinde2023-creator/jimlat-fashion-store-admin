@@ -22,46 +22,7 @@ var Admin = {
     return new Date(dateString).toLocaleTimeString('en-NG', {
       hour:   '2-digit',
       minute: '2-digit'
-    })},
-
-    addImageField(containerId){
-    var container = document.getElementById(containerId);
-    if (!container) return;
-
-    var count = container.querySelectorAll('.image-field-row').length;
-
-    var row = document.createElement('div');
-    row.className = 'image-field-row';
-    row.innerHTML = ''
-      + '<input type="text"'
-      + '       class="form-input"'
-      + '       placeholder="images/products/another-image.jpg">'
-      + '<span class="image-field-label">Image ' + (count + 1) + '</span>'
-      + '<button type="button"'
-      + '        class="image-field-remove"'
-      + '        onclick="this.parentElement.remove()">'
-      + '  ×'
-      + '</button>';
-
-    container.appendChild(row);
-  },
-
-  getImageUrls(containerId) {
-    var container = document.getElementById(containerId);
-    if (!container) return [];
-
-    var inputs = container.querySelectorAll('.form-input');
-    var urls   = [];
-
-    for (var i = 0; i < inputs.length; i++) {
-      var url = inputs[i].value.trim();
-      if (url.length > 0) {
-        urls.push(url);
-      }
-    }
-
-    return urls;
-  };
+    })
   },
 
   // ── STATUS ────────────────────────────────
@@ -695,6 +656,44 @@ var Admin = {
     container.appendChild(note);
 
     setTimeout(function() { note.remove(); }, 3000);
+  },
+   addImageField(containerId){
+    var container = document.getElementById(containerId);
+    if (!container) return;
+
+    var count = container.querySelectorAll('.image-field-row').length;
+
+    var row = document.createElement('div');
+    row.className = 'image-field-row';
+    row.innerHTML = ''
+      + '<input type="text"'
+      + '       class="form-input"'
+      + '       placeholder="images/products/another-image.jpg">'
+      + '<span class="image-field-label">Image ' + (count + 1) + '</span>'
+      + '<button type="button"'
+      + '        class="image-field-remove"'
+      + '        onclick="this.parentElement.remove()">'
+      + '  ×'
+      + '</button>';
+
+    container.appendChild(row);
+  },
+
+  getImageUrls(containerId) {
+    var container = document.getElementById(containerId);
+    if (!container) return [];
+
+    var inputs = container.querySelectorAll('.form-input');
+    var urls   = [];
+
+    for (var i = 0; i < inputs.length; i++) {
+      var url = inputs[i].value.trim();
+      if (url.length > 0) {
+        urls.push(url);
+      }
+    }
+
+    return urls;
   }
 
 };
