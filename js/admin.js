@@ -388,6 +388,23 @@ var Admin = {
                         .split(',')
                         .map(function(t) { return t.trim(); })
                         .filter(function(t) { return t.length > 0; });
+    var variantsRaw = document.getElementById('addVariants').value.trim();
+    var sizesRaw    = document.getElementById('addSizes').value.trim();
+
+    var variants = [];
+    if (variantsRaw.length > 0) {
+      var colorNames = variantsRaw.split(',').map(function(c) { return c.trim(); }).filter(function(c) { return c.length > 0; });
+      var stockPerVariant = Math.floor(stock / colorNames.length) || 0;
+
+      variants = colorNames.map(function(color) {
+        return { color: color, stock: stockPerVariant };
+      });
+    }
+
+    var sizes = [];
+    if (sizesRaw.length > 0) {
+      sizes = sizesRaw.split(',').map(function(s) { return s.trim(); }).filter(function(s) { return s.length > 0; });
+    }
 
     // Validation
     if (!name || !category || !price || !description || !stock || !imageUrl) {
@@ -419,8 +436,8 @@ var Admin = {
       tags:             tags,
       images:           [imageUrl],
       features:         [],
-      variants:         [],
-      sizes:            [],
+      variants:         variants,
+      sizes:            sizes,
       rating:           0,
       reviewCount:      0,
       dateAdded:        new Date().toISOString().split('T')[0],
@@ -504,6 +521,15 @@ var Admin = {
       e.preventDefault();
       await Admin.submitEditProduct(productId);
     });
+    // Variants
+      var variantColors = '';
+      if (p.variants && p.variants.length > 0) {
+        variantColors = p.variants.map(function(v) { return v.color; }).join(', ');
+      }
+      document.getElementById('editVariants').value = variantColors;
+
+      // Sizes
+      document.getElementById('editSizes').value = (p.sizes || []).join(', ');
   },
 
   async submitEditProduct(productId) {
@@ -521,6 +547,23 @@ var Admin = {
                         .split(',')
                         .map(function(t) { return t.trim(); })
                         .filter(function(t) { return t.length > 0; });
+    var variantsRaw = document.getElementById('editVariants').value.trim();
+    var sizesRaw    = document.getElementById('editSizes').value.trim();
+
+    var variants = [];
+    if (variantsRaw.length > 0) {
+      var colorNames = variantsRaw.split(',').map(function(c) { return c.trim(); }).filter(function(c) { return c.length > 0; });
+      var stockPerVariant = Math.floor(stock / colorNames.length) || 0;
+
+      variants = colorNames.map(function(color) {
+        return { color: color, stock: stockPerVariant };
+      });
+    }
+
+    var sizes = [];
+    if (sizesRaw.length > 0) {
+      sizes = sizesRaw.split(',').map(function(s) { return s.trim(); }).filter(function(s) { return s.length > 0; });
+    }
 
     if (!name || !category || !price || !description || !stock) {
       Admin.showNotification('Please fill in all required fields', 'error');
@@ -542,8 +585,10 @@ var Admin = {
       shortDescription: description.substring(0, 80),
       stock:            stock,
       featured:         featured,
-      tags:             tags
-    };
+      tags:             tags,
+      variants:         variants,
+      sizes:            sizes
+    };//omo
 
     if (imageUrl) {
       updates.images = [imageUrl];
