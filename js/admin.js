@@ -22,9 +22,9 @@ var Admin = {
     return new Date(dateString).toLocaleTimeString('en-NG', {
       hour:   '2-digit',
       minute: '2-digit'
-    }),
+    })},
 
-    addImageField(containerId) {
+    addImageField(containerId){
     var container = document.getElementById(containerId);
     if (!container) return;
 
