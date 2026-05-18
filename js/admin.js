@@ -516,7 +516,7 @@ var Admin = {
         previewContainer.innerHTML = previewHTML;
       }
 
-      // Fill image fields
+// Fill image fields
       var imageFieldsContainer = document.getElementById('editImageFields');
       if (imageFieldsContainer && p.images) {
         var fieldsHTML = '';
@@ -526,18 +526,18 @@ var Admin = {
             + '<div class="image-field-row">'
             + '  <input type="text"'
             + '         class="form-input"'
-            + '         value="' + p.images[j] + '">'
+            + '         value="' + p.images[j] + '"'
+            + '         placeholder="images/products/image.jpg">'
             + '  <span class="image-field-label">' + label + '</span>'
-            + (j > 0
-              ? '<button type="button"'
-                + '        class="image-field-remove"'
-                + '        onclick="this.parentElement.remove()">×</button>'
-              : '')
+            + '  <button type="button"'
+            + '          class="image-field-remove"'
+            + '          onclick="Admin.clearOrRemoveImage(this, ' + j + ')">'
+            + '    ×'
+            + '  </button>'
             + '</div>';
         }
         imageFieldsContainer.innerHTML = fieldsHTML;
       }
-
     } catch (error) {
       console.error('Error loading product:', error);
     }
@@ -694,6 +694,49 @@ var Admin = {
     }
 
     return urls;
+  },
+  clearOrRemoveImage(btn, index) {
+    var row   = btn.parentElement;
+    var input = row.querySelector('.form-input');
+
+    if (index === 0) {
+      // First image — don't remove the row
+      // Just clear the field so they can type new path
+      input.value = '';
+      input.focus();
+      input.placeholder = 'Enter new main image path';
+    } else {
+      // Other images — remove entire row
+      row.remove();
+    }
+
+    // Update current images preview
+    this.updateImagePreviews();
+  },
+
+  updateImagePreviews() {
+    var previewContainer = document.getElementById('currentImages');
+    var images = this.getImageUrls('editImageFields');
+
+    if (!previewContainer) return;
+
+    if (images.length === 0) {
+      previewContainer.innerHTML = '<p class="form-hint">No images set</p>';
+      return;
+    }
+
+    var html = '';
+    for (var i = 0; i < images.length; i++) {
+      html += ''
+        + '<div class="current-image-item">'
+        + '  <img src="../' + images[i] + '"'
+        + '       alt="Image ' + (i + 1) + '"'
+        + '       onerror="this.style.display=\'none\'">'
+        + '  <span class="image-number">' + (i + 1) + '</span>'
+        + '</div>';
+    }
+
+    previewContainer.innerHTML = html;
   }
 
 };
