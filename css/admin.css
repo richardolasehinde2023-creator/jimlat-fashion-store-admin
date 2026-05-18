@@ -618,3 +618,80 @@ button {
   color: var(--gray-400);
   margin-top: 4px;
 }
+/* ============================================
+   IMAGE FIELDS
+   ============================================ */
+.image-field-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.image-field-row .form-input {
+  flex: 1;
+}
+
+.image-field-label {
+  font-size: 11px;
+  color: var(--gray-400);
+  white-space: nowrap;
+  min-width: 70px;
+}
+
+.image-field-remove {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--gray-400);
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.image-field-remove:hover {
+  background: #fee2e2;
+  color: var(--error);
+}
+
+/* Current images preview */
+.current-images-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.current-image-item {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--gray-200);
+}
+
+.current-image-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.current-image-item .image-number {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 20px;
+  height: 20px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border-radius: 50%;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}

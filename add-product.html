@@ -138,15 +138,30 @@
 
               <div class="form-group">
                 <label class="form-label">
-                  Image URL <span class="required">*</span>
+                  Product Images <span class="required">*</span>
                 </label>
-                <input type="text"
-                       class="form-input"
-                       id="addImageUrl"
-                       placeholder="images/products/your-image.jpg">
+
+                <div id="addImageFields">
+                  <div class="image-field-row">
+                    <input type="text"
+                           class="form-input"
+                           placeholder="images/products/product-front.jpg">
+                    <span class="image-field-label">Main Image</span>
+                  </div>
+                </div>
+
+                <button type="button"
+                        class="btn btn-outline"
+                        style="margin-top:8px"
+                        onclick="Admin.addImageField('addImageFields')">
+                  + Add Another Image
+                </button>
+
                 <p class="form-hint">
-                  Enter the path to the image in your store folder.
-                  Example: images/products/black-tee.jpg
+                  First image is the main image shown on cards.
+                  Add more for the product gallery.
+                  Match images to variants if possible.
+                  Example: one image per color.
                 </p>
               </div>
 

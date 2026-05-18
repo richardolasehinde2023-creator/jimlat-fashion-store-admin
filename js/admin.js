@@ -22,7 +22,46 @@ var Admin = {
     return new Date(dateString).toLocaleTimeString('en-NG', {
       hour:   '2-digit',
       minute: '2-digit'
-    });
+    }),
+
+    addImageField(containerId) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+
+    var count = container.querySelectorAll('.image-field-row').length;
+
+    var row = document.createElement('div');
+    row.className = 'image-field-row';
+    row.innerHTML = ''
+      + '<input type="text"'
+      + '       class="form-input"'
+      + '       placeholder="images/products/another-image.jpg">'
+      + '<span class="image-field-label">Image ' + (count + 1) + '</span>'
+      + '<button type="button"'
+      + '        class="image-field-remove"'
+      + '        onclick="this.parentElement.remove()">'
+      + '  ×'
+      + '</button>';
+
+    container.appendChild(row);
+  },
+
+  getImageUrls(containerId) {
+    var container = document.getElementById(containerId);
+    if (!container) return [];
+
+    var inputs = container.querySelectorAll('.form-input');
+    var urls   = [];
+
+    for (var i = 0; i < inputs.length; i++) {
+      var url = inputs[i].value.trim();
+      if (url.length > 0) {
+        urls.push(url);
+      }
+    }
+
+    return urls;
+  };
   },
 
   // ── STATUS ────────────────────────────────
@@ -383,7 +422,7 @@ var Admin = {
     var description = document.getElementById('addDescription').value.trim();
     var stock       = parseInt(document.getElementById('addStock').value);
     var featured    = document.getElementById('addFeatured').checked;
-    var imageUrl    = document.getElementById('addImageUrl').value.trim();
+    var images = this.getImageUrls('addImageFields');
     var tags        = document.getElementById('addTags').value
                         .split(',')
                         .map(function(t) { return t.trim(); })
@@ -407,7 +446,7 @@ var Admin = {
     }
 
     // Validation
-    if (!name || !category || !price || !description || !stock || !imageUrl) {
+    if (!name || !category || !price || !description || !stock || images.length === 0) {
       Admin.showNotification('Please fill in all required fields', 'error');
       return;
     }
@@ -434,7 +473,7 @@ var Admin = {
       stock:            stock,
       featured:         featured,
       tags:             tags,
-      images:           [imageUrl],
+      images:           images,
       features:         [],
       variants:         variants,
       sizes:            sizes,
@@ -502,10 +541,40 @@ var Admin = {
       document.getElementById('editTags').value        = (p.tags || []).join(', ');
 
       // Show current image
-      var previewEl = document.getElementById('currentImage');
-      if (previewEl && p.images[0]) {
-        previewEl.src   = '../' + p.images[0];
-        previewEl.style.display = 'block';
+      // Show current images preview
+      var previewContainer = document.getElementById('currentImages');
+      if (previewContainer && p.images && p.images.length > 0) {
+        var previewHTML = '';
+        for (var i = 0; i < p.images.length; i++) {
+          previewHTML += ''
+            + '<div class="current-image-item">'
+            + '  <img src="../' + p.images[i] + '" alt="Image ' + (i + 1) + '">'
+            + '  <span class="image-number">' + (i + 1) + '</span>'
+            + '</div>';
+        }
+        previewContainer.innerHTML = previewHTML;
+      }
+
+      // Fill image fields
+      var imageFieldsContainer = document.getElementById('editImageFields');
+      if (imageFieldsContainer && p.images) {
+        var fieldsHTML = '';
+        for (var j = 0; j < p.images.length; j++) {
+          var label = j === 0 ? 'Main Image' : 'Image ' + (j + 1);
+          fieldsHTML += ''
+            + '<div class="image-field-row">'
+            + '  <input type="text"'
+            + '         class="form-input"'
+            + '         value="' + p.images[j] + '">'
+            + '  <span class="image-field-label">' + label + '</span>'
+            + (j > 0
+              ? '<button type="button"'
+                + '        class="image-field-remove"'
+                + '        onclick="this.parentElement.remove()">×</button>'
+              : '')
+            + '</div>';
+        }
+        imageFieldsContainer.innerHTML = fieldsHTML;
       }
 
     } catch (error) {
@@ -542,7 +611,7 @@ var Admin = {
     var description = document.getElementById('editDescription').value.trim();
     var stock       = parseInt(document.getElementById('editStock').value);
     var featured    = document.getElementById('editFeatured').checked;
-    var imageUrl    = document.getElementById('editImageUrl').value.trim();
+    var images = Admin.getImageUrls('editImageFields');
     var tags        = document.getElementById('editTags').value
                         .split(',')
                         .map(function(t) { return t.trim(); })
@@ -590,8 +659,8 @@ var Admin = {
       sizes:            sizes
     };//omo
 
-    if (imageUrl) {
-      updates.images = [imageUrl];
+    if (images.length > 0) {
+      updates.images = images;
     }
 
     try {
