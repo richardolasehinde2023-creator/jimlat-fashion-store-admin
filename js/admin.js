@@ -373,7 +373,7 @@ var Admin = {
     });
   },
 
-  async submitAddProduct() {
+async submitAddProduct() {
     var name        = document.getElementById('addName').value.trim();
     var category    = document.getElementById('addCategory').value;
     var subcategory = document.getElementById('addSubcategory').value.trim();
@@ -383,17 +383,22 @@ var Admin = {
     var description = document.getElementById('addDescription').value.trim();
     var stock       = parseInt(document.getElementById('addStock').value);
     var featured    = document.getElementById('addFeatured').checked;
+
+    // Get images
     var images = this.getImageUrls('addImageFields');
-    var tags        = document.getElementById('addTags').value
-                        .split(',')
-                        .map(function(t) { return t.trim(); })
-                        .filter(function(t) { return t.length > 0; });
-    var variantsRaw = document.getElementById('addVariants').value.trim();
-    var sizesRaw    = document.getElementById('addSizes').value.trim();
+
+    // Get variants
+    var variantsRaw = document.getElementById('addVariants')
+      ? document.getElementById('addVariants').value.trim()
+      : '';
 
     var variants = [];
     if (variantsRaw.length > 0) {
-      var colorNames = variantsRaw.split(',').map(function(c) { return c.trim(); }).filter(function(c) { return c.length > 0; });
+      var colorNames = variantsRaw
+        .split(',')
+        .map(function(c) { return c.trim(); })
+        .filter(function(c) { return c.length > 0; });
+
       var stockPerVariant = Math.floor(stock / colorNames.length) || 0;
 
       variants = colorNames.map(function(color) {
@@ -401,14 +406,37 @@ var Admin = {
       });
     }
 
+    // Get sizes
+    var sizesRaw = document.getElementById('addSizes')
+      ? document.getElementById('addSizes').value.trim()
+      : '';
+
     var sizes = [];
     if (sizesRaw.length > 0) {
-      sizes = sizesRaw.split(',').map(function(s) { return s.trim(); }).filter(function(s) { return s.length > 0; });
+      sizes = sizesRaw
+        .split(',')
+        .map(function(s) { return s.trim(); })
+        .filter(function(s) { return s.length > 0; });
     }
 
+    // Get tags
+    var tagsRaw = document.getElementById('addTags')
+      ? document.getElementById('addTags').value
+      : '';
+
+    var tags = tagsRaw
+      .split(',')
+      .map(function(t) { return t.trim(); })
+      .filter(function(t) { return t.length > 0; });
+
     // Validation
-    if (!name || !category || !price || !description || !stock || images.length === 0) {
+    if (!name || !category || !price || !description || !stock) {
       Admin.showNotification('Please fill in all required fields', 'error');
+      return;
+    }
+
+    if (images.length === 0) {
+      Admin.showNotification('At least one image is required', 'error');
       return;
     }
 
@@ -416,9 +444,10 @@ var Admin = {
     btn.textContent = 'Adding...';
     btn.disabled    = true;
 
-    // Create product ID from name
     var productId = 'prod-' + Date.now();
-    var slug      = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    var slug      = name.toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
 
     var product = {
       id:               productId,
@@ -453,6 +482,7 @@ var Admin = {
       }, 1500);
 
     } catch (error) {
+      console.error('Error adding product:', error);
       Admin.showNotification('Failed to add product', 'error');
       btn.textContent = 'Add Product';
       btn.disabled    = false;
@@ -477,7 +507,7 @@ var Admin = {
     this.bindEditProductForm(productId);
   },
 
-  async loadProductForEdit(productId) {
+async loadProductForEdit(productId) {
     try {
       var doc = await db.collection('products').doc(productId).get();
 
@@ -486,47 +516,59 @@ var Admin = {
         return;
       }
 
-      var p = doc.data();
+      var product = doc.data();
 
-      // Fill form fields
-      document.getElementById('editName').value        = p.name        || '';
-      document.getElementById('editCategory').value    = p.category    || '';
-      document.getElementById('editSubcategory').value = p.subcategory || '';
-      document.getElementById('editPrice').value       = p.price       || '';
-      document.getElementById('editOnSale').checked    = p.onSale      || false;
-      document.getElementById('editSalePrice').value   = p.salePrice   || '';
-      document.getElementById('editDescription').value = p.description || '';
-      document.getElementById('editStock').value       = p.stock       || '';
-      document.getElementById('editFeatured').checked  = p.featured    || false;
-      document.getElementById('editImageUrl').value    = p.images[0]   || '';
-      document.getElementById('editTags').value        = (p.tags || []).join(', ');
+      // Basic fields
+      document.getElementById('editName').value        = product.name        || '';
+      document.getElementById('editCategory').value    = product.category    || '';
+      document.getElementById('editSubcategory').value = product.subcategory || '';
+      document.getElementById('editPrice').value       = product.price       || '';
+      document.getElementById('editOnSale').checked    = product.onSale      || false;
+      document.getElementById('editSalePrice').value   = product.salePrice   || '';
+      document.getElementById('editDescription').value = product.description || '';
+      document.getElementById('editStock').value       = product.stock       || '';
+      document.getElementById('editFeatured').checked  = product.featured    || false;
+      document.getElementById('editTags').value        = (product.tags || []).join(', ');
 
-      // Show current image
-      // Show current images preview
+      // Variants
+      var variantColors = '';
+      if (product.variants && product.variants.length > 0) {
+        variantColors = product.variants.map(function(v) {
+          return v.color;
+        }).join(', ');
+      }
+      document.getElementById('editVariants').value = variantColors;
+
+      // Sizes
+      document.getElementById('editSizes').value = (product.sizes || []).join(', ');
+
+      // Current images preview
       var previewContainer = document.getElementById('currentImages');
-      if (previewContainer && p.images && p.images.length > 0) {
+      if (previewContainer && product.images && product.images.length > 0) {
         var previewHTML = '';
-        for (var i = 0; i < p.images.length; i++) {
+        for (var i = 0; i < product.images.length; i++) {
           previewHTML += ''
             + '<div class="current-image-item">'
-            + '  <img src="../' + p.images[i] + '" alt="Image ' + (i + 1) + '">'
+            + '  <img src="../' + product.images[i] + '"'
+            + '       alt="Image ' + (i + 1) + '"'
+            + '       onerror="this.style.display=\'none\'">'
             + '  <span class="image-number">' + (i + 1) + '</span>'
             + '</div>';
         }
         previewContainer.innerHTML = previewHTML;
       }
 
-// Fill image fields
+      // Image input fields
       var imageFieldsContainer = document.getElementById('editImageFields');
-      if (imageFieldsContainer && p.images) {
+      if (imageFieldsContainer && product.images) {
         var fieldsHTML = '';
-        for (var j = 0; j < p.images.length; j++) {
+        for (var j = 0; j < product.images.length; j++) {
           var label = j === 0 ? 'Main Image' : 'Image ' + (j + 1);
           fieldsHTML += ''
             + '<div class="image-field-row">'
             + '  <input type="text"'
             + '         class="form-input"'
-            + '         value="' + p.images[j] + '"'
+            + '         value="' + product.images[j] + '"'
             + '         placeholder="images/products/image.jpg">'
             + '  <span class="image-field-label">' + label + '</span>'
             + '  <button type="button"'
@@ -538,8 +580,10 @@ var Admin = {
         }
         imageFieldsContainer.innerHTML = fieldsHTML;
       }
+
     } catch (error) {
       console.error('Error loading product:', error);
+      Admin.showNotification('Failed to load product', 'error');
     }
   },
 
@@ -562,7 +606,7 @@ var Admin = {
       document.getElementById('editSizes').value = (p.sizes || []).join(', ');
   },
 
-  async submitEditProduct(productId) {
+async submitEditProduct(productId) {
     var name        = document.getElementById('editName').value.trim();
     var category    = document.getElementById('editCategory').value;
     var subcategory = document.getElementById('editSubcategory').value.trim();
@@ -572,31 +616,60 @@ var Admin = {
     var description = document.getElementById('editDescription').value.trim();
     var stock       = parseInt(document.getElementById('editStock').value);
     var featured    = document.getElementById('editFeatured').checked;
-    var images = Admin.getImageUrls('editImageFields');
-    var tags        = document.getElementById('editTags').value
-                        .split(',')
-                        .map(function(t) { return t.trim(); })
-                        .filter(function(t) { return t.length > 0; });
-    var variantsRaw = document.getElementById('editVariants').value.trim();
-    var sizesRaw    = document.getElementById('editSizes').value.trim();
 
+    // Get variants
+    var variantsRaw = document.getElementById('editVariants') 
+      ? document.getElementById('editVariants').value.trim() 
+      : '';
+    
     var variants = [];
     if (variantsRaw.length > 0) {
-      var colorNames = variantsRaw.split(',').map(function(c) { return c.trim(); }).filter(function(c) { return c.length > 0; });
+      var colorNames = variantsRaw
+        .split(',')
+        .map(function(c) { return c.trim(); })
+        .filter(function(c) { return c.length > 0; });
+      
       var stockPerVariant = Math.floor(stock / colorNames.length) || 0;
-
+      
       variants = colorNames.map(function(color) {
         return { color: color, stock: stockPerVariant };
       });
     }
 
+    // Get sizes
+    var sizesRaw = document.getElementById('editSizes')
+      ? document.getElementById('editSizes').value.trim()
+      : '';
+
     var sizes = [];
     if (sizesRaw.length > 0) {
-      sizes = sizesRaw.split(',').map(function(s) { return s.trim(); }).filter(function(s) { return s.length > 0; });
+      sizes = sizesRaw
+        .split(',')
+        .map(function(s) { return s.trim(); })
+        .filter(function(s) { return s.length > 0; });
     }
 
-    if (!name || !category || !price || !description || !stock) {
+    // Get images from fields
+    var images = Admin.getImageUrls('editImageFields');
+
+    // Get tags
+    var tagsRaw = document.getElementById('editTags')
+      ? document.getElementById('editTags').value
+      : '';
+
+    var tags = tagsRaw
+      .split(',')
+      .map(function(t) { return t.trim(); })
+      .filter(function(t) { return t.length > 0; });
+
+    // Validation
+    if (!name || !category || !price || !description || stock === undefined) {
       Admin.showNotification('Please fill in all required fields', 'error');
+      return;
+    }
+
+    if (images.length === 0) {
+      Admin.showNotification('At least one image is required', 'error');
       return;
     }
 
@@ -604,8 +677,13 @@ var Admin = {
     btn.textContent = 'Saving...';
     btn.disabled    = true;
 
+    var slug = name.toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
+
     var updates = {
       name:             name,
+      slug:             slug,
       category:         category,
       subcategory:      subcategory,
       price:            price,
@@ -616,13 +694,10 @@ var Admin = {
       stock:            stock,
       featured:         featured,
       tags:             tags,
+      images:           images,
       variants:         variants,
       sizes:            sizes
-    };//omo
-
-    if (images.length > 0) {
-      updates.images = images;
-    }
+    };
 
     try {
       await db.collection('products').doc(productId).update(updates);
@@ -633,6 +708,7 @@ var Admin = {
       }, 1500);
 
     } catch (error) {
+      console.error('Error updating product:', error);
       Admin.showNotification('Failed to update product', 'error');
       btn.textContent = 'Save Changes';
       btn.disabled    = false;
